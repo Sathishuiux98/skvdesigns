@@ -2462,7 +2462,8 @@ html .pf .nav li a.kp .k{background:var(--y)!important;border-color:var(--y)!imp
 html .pf .sec-h h2 .w+.w{margin-left:calc(.26em - 12px)}
 html .pf .cp3-st{position:relative}
 html .pf .cp3-st::before{content:"";position:absolute;left:-3px;right:-3px;top:-12px;bottom:-12px}
-@media (min-width:1600px){html .pf .wrap{max-width:1368px}}
+html .pf .toc{left:max(84px,calc(50% - 552px))}
+@media (min-width:1600px){html .pf .wrap{max-width:1368px}html .pf .toc{left:calc(50% - 600px)}}
 html .pf .dkt .kn{background:var(--y)}
 </style></head><body>
 <div class="pf">
@@ -2989,7 +2990,7 @@ function pfPage(root){
     prog.style.setProperty('--p',Math.min(1,y/m)); nav.classList.toggle('scrolled',y>8);
     var cur=null; secs.forEach(function(s,i){ if(s && s.offsetParent!==null && s.getBoundingClientRect().top<innerHeight*.4) cur=i; });
     links.forEach(function(a,i){ a.classList.toggle('on',i===cur); }); setInd(links[cur==null?0:cur]);
-    var off=false; root.querySelectorAll('[data-hidetoc],.foot').forEach(function(s){ var r=s.getBoundingClientRect(); if(r.top<640 && r.bottom>100) off=true; });
+    var off=false; var tr=toc.getBoundingClientRect(); root.querySelectorAll('[data-hidetoc],.foot').forEach(function(s){ var r=s.getBoundingClientRect(); if(r.top<tr.bottom+24 && r.bottom>tr.top-24) off=true; });
     toc.classList.toggle('off',off || y<40 && false);
     if(heroImg && !RM){ var r=heroImg.getBoundingClientRect(); heroImg.style.setProperty('--py',Math.max(-60,Math.min(0,r.top*.12-20))+'px'); }
     if(hr && !RM){ var rr=hr.getBoundingClientRect(), k=Math.min(1,Math.max(0,-rr.top/Math.max(1,hr._ex||1))); hrT.style.setProperty('--hx',(-k*(hr._ex||0))+'px'); hr.style.setProperty('--hp',k); }
