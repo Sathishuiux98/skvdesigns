@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://skvdesigns.com/sitemap.xml

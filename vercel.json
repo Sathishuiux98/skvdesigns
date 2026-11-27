@@ -1,4 +1,16 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/me-titan",
+      "destination": "/employee-portal",
+      "permanent": true
+    },
+    {
+      "source": "/me-titan.html",
+      "destination": "/employee-portal",
+      "permanent": true
+    }
+  ]
 }
