@@ -2541,6 +2541,8 @@ html body .pf.dark [data-dk="tint"]{background-color:color-mix(in srgb,var(--y,#
 html body .pf.dark [data-dk-grad]{background-color:#141413!important}
 html body .pf.dark [data-dk-inv]{background-color:#EDEBE5!important}
 html body .pf.dark main>section[data-dk="bg"],html body .pf.dark .hero-w,html body .pf.dark main>section[data-dk="tile"]{background-color:transparent!important;box-shadow:none!important}
+html body .pf.dark .nav li a:not(.on):not(:hover):not(.kp):not(:focus-visible) .k{color:#EDEBE5!important;border-color:rgba(255,255,255,.2)!important;background:transparent!important}
+html body .pf.dark .nav li a:not(.on):not(:hover):not(.kp) {color:#EDEBE5}
 html body .pf.dark ::selection{background:#EDEBE5;color:#0C0C0B}
 </style></head><body>
 <div class="pf">
@@ -2797,7 +2799,10 @@ function pfDark(r){
       var a=(Math.PI*2*k/7)+Math.random()*.5, dist=26+Math.random()*16;
       p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+Math.cos(a)*dist+'px,'+Math.sin(a)*dist+'px) scale(.2)',opacity:0}],{duration:620+Math.random()*200,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=(function(q){return function(){ q.remove(); };})(p); } }
   var saved=null; try{ saved=localStorage.getItem('pf-theme'); }catch(e){}
-  apply(saved==='dark');
+  /* default: follow the system; light only when the system says light, otherwise dark. A choice made with the toggle wins. */
+  function sysDark(){ try{ if(window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) return false; }catch(e){} return true; }
+  apply(saved==='dark'||(saved!=='light'&&sysDark()));
+  try{ var smq=matchMedia('(prefers-color-scheme: dark)'), onSys=function(){ var sv=null; try{ sv=localStorage.getItem('pf-theme'); }catch(e){} if(sv!=='dark'&&sv!=='light') apply(sysDark()); }; if(smq.addEventListener) smq.addEventListener('change',onSys); else if(smq.addListener) smq.addListener(onSys); }catch(e){}
   t.addEventListener('click',function(){
     var d=!r.classList.contains('dark'); try{ localStorage.setItem('pf-theme',d?'dark':'light'); }catch(e){}
     var b=t.getBoundingClientRect(), x=b.left+b.width/2, y=b.top+b.height/2;
@@ -3057,18 +3062,18 @@ function pfMotion(root){
     var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ show(e.target); io.unobserve(e.target); } }); },{rootMargin:'0px 0px -10% 0px',threshold:.12});
     targets.forEach(function(el){ io.observe(el); });
   } else targets.forEach(show);
-  /* loader: first visit only */
+  /* loader: every time a case study opens */
   var ld=root.querySelector('.ld'), iv=null, tms=[];
   function ready(){ root.classList.add('ready'); }
   function clearAll(){ if(iv){ clearInterval(iv); iv=null; } tms.forEach(clearTimeout); tms=[]; }
   /* the loader plays on every open — and again when the page is shown again (tab/mode switch, big resize) */
-  function seenLd(){ try{ return localStorage.getItem('pf-ld')==='1'; }catch(e){ return false; } }
+  function seenLd(){ return !!window.__pfLdPlayed; }
   function playLoader(){
     if(!ld || RM || seenLd()){ if(ld) ld.classList.add('off'); requestAnimationFrame(ready); return; }
     clearAll(); root.classList.remove('ready');
-    try{ localStorage.setItem('pf-ld','1'); }catch(e){} ld.classList.remove('done','off','go'); ld.classList.add('run'); void ld.offsetWidth; ld.classList.add('go');
+    window.__pfLdPlayed=1; ld.classList.remove('done','off','go'); ld.classList.add('run'); void ld.offsetWidth; ld.classList.add('go');
     var p=0, num=ld.querySelector('i'); num.textContent='00'; ld.style.setProperty('--lp',0);
-    iv=setInterval(function(){ p=Math.min(100,p+Math.ceil(Math.random()*14)); num.textContent=(p<10?'0':'')+p; ld.style.setProperty('--lp',p/100);
+    iv=setInterval(function(){ p=Math.min(100,p+Math.ceil(Math.random()*8)); num.textContent=(p<10?'0':'')+p; ld.style.setProperty('--lp',p/100);
       if(p>=100){ clearInterval(iv); iv=null; tms.push(setTimeout(function(){ ld.classList.add('done'); tms.push(setTimeout(ready,250)); tms.push(setTimeout(function(){ ld.classList.add('off'); },1000)); },180)); } },60);
   }
   playLoader();
